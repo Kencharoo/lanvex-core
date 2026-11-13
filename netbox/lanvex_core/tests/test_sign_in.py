@@ -39,6 +39,15 @@ class SignInTest(TestCase):
         response = self.client.get(reverse('home'), **via_lanvex('lanvex-service'))
         self.assertEqual(response.status_code, 302)
 
+    def test_failed_sign_in_from_lanvex_is_explained_instead_of_an_empty_login_page(self):
+        response = self.client.get(reverse('home'), follow=True, **via_lanvex('mallory', secret='x' * 40))
+        self.assertEqual(response.status_code, 403)
+        self.assertIn('could not sign you in', response.content.decode())
+        response = self.client.get(reverse('login'), **via_lanvex('lanvex-service'))
+        self.assertEqual(response.status_code, 403)
+        # Without Lanvex's headers (the container health check) the login page answers as usual.
+        self.assertEqual(self.client.get(reverse('login')).status_code, 200)
+
     def test_lanvex_admin_becomes_superuser_with_display_name(self):
         response = self.client.get(reverse('home'), **via_lanvex('marco', display_name='Marco'))
         self.assertEqual(response.status_code, 200)

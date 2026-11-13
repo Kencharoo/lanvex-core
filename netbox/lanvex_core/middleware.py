@@ -23,6 +23,10 @@ class LanvexProxyMiddleware:
        superuser status) only when it signs a user in, so when the groups Lanvex sends differ from
        those the session started with, the user is signed in again with the new ones.
 
+    Lanvex always sends the user's name. A request that carries it but still arrives unauthenticated
+    on the login page (which has no form here) failed single sign-on; it gets an explanation instead
+    of an empty page. Requests without the name, like the container's health check, see the page.
+
     API requests authenticated with a token do not carry a session user at this point and are left
     to NetBox's token authentication.
     """
@@ -45,6 +49,13 @@ class LanvexProxyMiddleware:
                 user = self._sign_in_again(request, groups)
                 if user is None:
                     return _refused()
+        elif request.path == settings.LOGIN_URL and request.META.get(settings.REMOTE_AUTH_HEADER):
+            logger.warning(
+                'Could not sign in %r from Lanvex: %s.',
+                request.META[settings.REMOTE_AUTH_HEADER],
+                'the user name is reserved' if proxy_verified(request) else 'the proxy secret does not match',
+            )
+            return _sign_in_failed()
         return self.get_response(request)
 
     @staticmethod
@@ -69,4 +80,14 @@ class LanvexProxyMiddleware:
 def _refused():
     return HttpResponseForbidden(
         'Lanvex Core can only be used through Lanvex. Open it from Lanvex.\n', content_type='text/plain; charset=utf-8'
+    )
+
+
+def _sign_in_failed():
+    return HttpResponseForbidden(
+        'Lanvex Core could not sign you in.\n\n'
+        'Lanvex and Lanvex Core may be set up with different proxy secrets, or this user name is reserved '
+        "for Lanvex's service account. An administrator can find the reason in Lanvex Core's log "
+        '(docker compose logs core).\n',
+        content_type='text/plain; charset=utf-8',
     )

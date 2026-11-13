@@ -43,5 +43,6 @@ WORKDIR /opt/lanvex-core/netbox
 EXPOSE 8080
 HEALTHCHECK --interval=15s --timeout=5s --start-period=600s --retries=5 \
   CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8080/core/login/', timeout=4).status == 200 else 1)"
-ENTRYPOINT ["/opt/lanvex-core/lanvex/docker-entrypoint.sh"]
+# Through sh, so the script works even if an unpacked archive lost its execute permission.
+ENTRYPOINT ["/bin/sh", "/opt/lanvex-core/lanvex/docker-entrypoint.sh"]
 CMD ["core"]
