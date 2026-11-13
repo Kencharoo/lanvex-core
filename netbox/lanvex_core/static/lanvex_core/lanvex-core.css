@@ -145,3 +145,89 @@ body {
   width: 1.25rem;
   height: 1.25rem;
 }
+
+/* NetBox paints some accents in hard-coded teal rather than the theme variables; use Lanvex blue. */
+.navbar {
+  --tblr-navbar-active-border-color: var(--tblr-primary);
+}
+.list-group-item.active {
+  border-left-color: var(--tblr-primary);
+}
+.page-link:hover .page-item-title {
+  color: var(--tblr-primary);
+}
+.status-primary {
+  --tblr-status-color: var(--tblr-primary);
+  --tblr-status-color-rgb: var(--tblr-primary-rgb);
+}
+.toast-primary {
+  --tblr-toast-color: var(--tblr-primary);
+}
+.ts-wrapper.multi .ts-control > div.active {
+  background: var(--tblr-primary);
+}
+tr[data-virtual=true] {
+  --tblr-table-bg-state: rgba(var(--tblr-primary-rgb), 0.15);
+}
+.navbar-vertical.navbar-expand-lg .nav-item.dropdown.active:after {
+  border-color: var(--tblr-primary) !important;
+}
+html[data-bs-theme=light] .navbar-vertical.navbar-expand-lg {
+  background: linear-gradient(180deg, #2e6be600, #2e6be610), #ffffff;
+}
+html[data-bs-theme=light] .navbar-vertical.navbar-expand-lg .navbar-collapse .text-secondary {
+  color: #2e6be6 !important;
+}
+.navbar-vertical.navbar-expand-lg .navbar-collapse .nav-link-icon,
+.navbar-vertical.navbar-expand-lg .navbar-collapse .nav-link-title,
+.navbar-vertical.navbar-expand-lg .navbar-collapse .dropdown-menu .dropdown-item > a {
+  color: #151a21;
+}
+.footer .text-primary {
+  color: #5d6673 !important;
+}
+
+/* Dark: Lanvex's neutral greys instead of NetBox's navy. */
+html[data-bs-theme=dark] {
+  --tblr-body-bg: #111519;
+  --tblr-body-bg-rgb: 17, 21, 25;
+  --tblr-body-color: #e6e9ee;
+  --tblr-bg-surface: #171c22;
+  --tblr-bg-surface-secondary: #1d232a;
+  --tblr-bg-surface-tertiary: #1d232a;
+  --tblr-secondary-bg: #1d232a;
+  --tblr-tertiary-bg: #171c22;
+  --tblr-border-color: #262d36;
+}
+html[data-bs-theme=dark],
+html[data-bs-theme=dark] .navbar,
+html[data-bs-theme=dark] .page-header {
+  background-color: #111519;
+}
+html[data-bs-theme=dark] .page {
+  background-color: #111519 !important;
+}
+html[data-bs-theme=dark] .card {
+  background: #171c22 !important;
+}
+html[data-bs-theme=dark] .table thead th,
+html[data-bs-theme=dark] .markdown > table thead th {
+  background: #1d232a !important;
+}
+html[data-bs-theme=dark] .navbar-vertical.navbar-expand-lg {
+  background: linear-gradient(180deg, #6c97f000, #6c97f012), #171c22;
+}
+html[data-bs-theme=dark] .navbar-vertical.navbar-expand-lg .navbar-collapse .text-secondary {
+  color: #6c97f0 !important;
+}
+html[data-bs-theme=dark] .navbar-vertical.navbar-expand-lg .navbar-collapse .nav-link-icon,
+html[data-bs-theme=dark] .navbar-vertical.navbar-expand-lg .navbar-collapse .nav-link-title,
+html[data-bs-theme=dark] .navbar-vertical.navbar-expand-lg .navbar-collapse .dropdown-menu .dropdown-item > a {
+  color: #e6e9ee !important;
+}
+html[data-bs-theme=dark] .page-link.active,
+html[data-bs-theme=dark] .active > .page-link,
+html[data-bs-theme=dark] .btn-primary,
+html[data-bs-theme=dark] .text-bg-primary {
+  color: #0d1420 !important;
+}

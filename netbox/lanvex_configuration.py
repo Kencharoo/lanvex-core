@@ -81,7 +81,6 @@ REMOTE_AUTH_DEFAULT_PERMISSIONS = {}
 
 # Every signed-in Lanvex user may look at everything; only Lanvex administrators (superusers here)
 # may change anything. Signing in happens in Lanvex, never on Lanvex Core's own login page.
-LOGIN_REQUIRED = True
 EXEMPT_VIEW_PERMISSIONS = ['*']
 LOGIN_FORM_HIDDEN = True
 
@@ -89,6 +88,33 @@ LOGIN_FORM_HIDDEN = True
 ISOLATED_DEPLOYMENT = True
 CENSUS_REPORTING_ENABLED = False
 RELEASE_CHECK_URL = None
+
+# The home page for new users: NetBox's default minus its news feed (no internet access is assumed).
+DEFAULT_DASHBOARD = [
+    {'widget': 'extras.NoteWidget', 'width': 4, 'height': 3, 'title': 'Lanvex Core', 'color': 'blue', 'config': {
+        'content': (
+            'Lanvex Core is where your network is documented: sites, racks, devices, cables, IP addresses '
+            'and VLANs. Lanvex shows this data and compares it with what your servers actually run. '
+            'Use **Back to Lanvex** at the top to return. This dashboard is yours to rearrange.'
+        ),
+    }},
+    {'widget': 'extras.ObjectCountsWidget', 'width': 4, 'height': 3, 'title': 'IPAM', 'config': {
+        'models': ['ipam.vrf', 'ipam.aggregate', 'ipam.prefix', 'ipam.iprange', 'ipam.ipaddress', 'ipam.vlan'],
+    }},
+    {'widget': 'extras.ObjectCountsWidget', 'width': 4, 'height': 3, 'title': 'DCIM', 'config': {
+        'models': ['dcim.site', 'dcim.rack', 'dcim.devicetype', 'dcim.device', 'dcim.cable'],
+    }},
+    {'widget': 'extras.BookmarksWidget', 'width': 4, 'height': 4, 'title': 'Bookmarks', 'color': 'orange'},
+    {'widget': 'extras.ObjectCountsWidget', 'width': 4, 'height': 2, 'title': 'Organization', 'config': {
+        'models': ['dcim.site', 'tenancy.tenant', 'tenancy.contact'],
+    }},
+    {'widget': 'extras.ObjectCountsWidget', 'width': 4, 'height': 2, 'title': 'Virtualization', 'config': {
+        'models': ['virtualization.cluster', 'virtualization.virtualmachine'],
+    }},
+    {'widget': 'extras.ObjectListWidget', 'width': 12, 'height': 5, 'title': 'Change Log', 'color': 'blue', 'config': {
+        'model': 'core.objectchange', 'page_size': 25,
+    }},
+]
 
 PLUGINS = ['lanvex_core']
 PLUGINS_CONFIG = {
