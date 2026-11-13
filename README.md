@@ -1,3 +1,7 @@
+> **This is Lanvex Core**, a fork of NetBox maintained for Lanvex: NetBox with Lanvex's branding
+> and single sign-on. It is not NetBox and is not supported by NetBox Labs. See [FORK.md](FORK.md).
+> The rest of this README is NetBox's own.
+
 <div align="center">
   <img src="https://raw.githubusercontent.com/netbox-community/netbox/main/docs/netbox_logo_light.svg" width="400" alt="NetBox logo" />
   <p><strong>The cornerstone of every automated network</strong></p>

@@ -5,3 +5,10 @@ other projects may introduce issues affecting performance, data integrity,
 and security.
 
 For more information, please see https://github.com/netbox-community/netbox.
+
+Lanvex Core
+-----------
+This distribution is Lanvex Core, a modified version of NetBox. The changes to NetBox's files and
+the files added by Lanvex Core are listed in FORK.md. Lanvex Core's additions are licensed under the
+Apache License 2.0. IBM Plex fonts (netbox/lanvex_core/static/lanvex_core/fonts) are licensed under
+the SIL Open Font License 1.1.

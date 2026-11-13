@@ -1,4 +1,5 @@
 {# Base template for (almost) all NetBox pages #}
+{# Modified for Lanvex Core: product name in the page title. See FORK.md. #}
 {% load static %}
 {% load helpers %}
 {% load i18n %}
@@ -21,7 +22,7 @@
     <meta name="hostname" content="{{ settings.HOSTNAME }}" />
 
     {# Page title #}
-    <title>{% block title %}{% trans "Home" %}{% endblock %} | NetBox</title>
+    <title>{% block title %}{% trans "Home" %}{% endblock %} | Lanvex Core</title>
 
     {# Initialize color mode #}
     <script

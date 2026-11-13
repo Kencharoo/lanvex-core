@@ -1,0 +1,13 @@
+# Lanvex Core image build context (lanvex/Dockerfile). Added by the fork; see FORK.md.
+.git
+.github
+**/__pycache__
+**/*.pyc
+netbox/static
+netbox/media/*
+netbox/project-static/node_modules
+netbox/project-static/docs
+netbox/netbox/configuration.py
+netbox/local
+venv
+.venv
