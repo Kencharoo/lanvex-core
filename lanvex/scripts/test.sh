@@ -14,5 +14,8 @@ lanvex/scripts/check-fork.sh
 cd netbox
 NETBOX_CONFIGURATION=lanvex_configuration_testing "$PY" manage.py test lanvex_core --keepdb
 if [ "${1:-}" = "--full" ]; then
-  NETBOX_CONFIGURATION=netbox.configuration_testing "$PY" manage.py test --keepdb --parallel "$(nproc)"
+  # NetBox's own tests, with NetBox's own test configuration: every app with tests except lanvex_core,
+  # whose tests need the configuration above.
+  mapfile -t apps < <(for d in */tests; do app=${d%/tests}; [ "$app" = lanvex_core ] || echo "$app"; done)
+  NETBOX_CONFIGURATION=netbox.configuration_testing "$PY" manage.py test --keepdb --parallel "$(nproc)" "${apps[@]}"
 fi
