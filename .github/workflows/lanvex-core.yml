@@ -42,7 +42,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # the fork check compares with the NetBox release tag in lanvex/UPSTREAM
+          fetch-depth: 0 # the fork check compares with the NetBox release in lanvex/UPSTREAM
+
+      - name: NetBox release tag
+        run: |
+          tag=$(cat lanvex/UPSTREAM)
+          git rev-parse -q --verify "refs/tags/$tag" >/dev/null \
+            || git fetch --no-tags https://github.com/netbox-community/netbox.git "refs/tags/$tag:refs/tags/$tag"
 
       - uses: actions/setup-python@v5
         with:
