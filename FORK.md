@@ -71,7 +71,8 @@ the new base in `lanvex/UPSTREAM`. Merge security releases within days.
 ## Building and running
 
 The image runs as `core` (web application on port 8080, prepares the database on start), `worker`
-(background jobs) or `manage <command>`. Lanvex's `docker-compose.yml` runs both roles, a PostgreSQL
+(background jobs) or `manage <command>`. Its health check, `lanvex/healthcheck.py`, checks whichever
+role the container runs: the web application answers, or the worker is registered in Redis. Lanvex's `docker-compose.yml` runs both roles, a PostgreSQL
 and a Redis for Lanvex Core, and the Lanvex installer writes all settings. Lanvex Core publishes no
 port: it is reachable only through Lanvex.
 

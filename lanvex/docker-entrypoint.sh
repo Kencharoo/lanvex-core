@@ -39,7 +39,9 @@ case "$role" in
     python manage.py clearsessions
     python manage.py collectstatic --no-input -v 0
     python manage.py lanvex_init
+    # No control socket: nothing uses gunicorn's control interface, and the home directory is read-only.
     exec gunicorn --bind 0.0.0.0:8080 --workers "${LANVEX_CORE_WORKERS:-3}" --threads 3 --timeout 120 \
+      --no-control-socket \
       --max-requests 5000 --max-requests-jitter 500 --access-logfile - netbox.wsgi
     ;;
   worker)

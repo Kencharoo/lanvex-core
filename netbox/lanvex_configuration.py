@@ -127,7 +127,10 @@ PLUGINS_CONFIG = {
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'formatters': {'plain': {'format': '%(asctime)s %(levelname)s %(name)s: %(message)s'}},
+    # With the UTC offset, like gunicorn's own lines, so logs from every container line up.
+    'formatters': {'plain': {
+        'format': '[%(asctime)s] %(levelname)s %(name)s: %(message)s', 'datefmt': '%Y-%m-%d %H:%M:%S %z',
+    }},
     'handlers': {'console': {'class': 'logging.StreamHandler', 'formatter': 'plain'}},
     'root': {'handlers': ['console'], 'level': env('LANVEX_CORE_LOG_LEVEL', 'INFO')},
     'loggers': {

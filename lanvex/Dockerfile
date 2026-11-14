@@ -27,8 +27,8 @@ FROM ${PYTHON_IMAGE}
 RUN apt-get update \
  && apt-get install -y --no-install-recommends libpq5 \
  && rm -rf /var/lib/apt/lists/* \
- && groupadd --system --gid 1000 lanvexcore \
- && useradd --system --uid 1000 --gid lanvexcore --home /opt/lanvex-core --shell /usr/sbin/nologin lanvexcore
+ && groupadd --gid 1000 lanvexcore \
+ && useradd --uid 1000 --gid lanvexcore --no-create-home --home-dir /opt/lanvex-core --shell /usr/sbin/nologin lanvexcore
 COPY --from=build /opt/venv /opt/venv
 COPY --from=build /src /opt/lanvex-core
 RUN mkdir -p /opt/lanvex-core/netbox/static /opt/lanvex-core/netbox/media /opt/lanvex-core/netbox/reports /opt/lanvex-core/netbox/scripts \
@@ -41,8 +41,9 @@ ENV PATH=/opt/venv/bin:$PATH \
 USER lanvexcore
 WORKDIR /opt/lanvex-core/netbox
 EXPOSE 8080
-HEALTHCHECK --interval=15s --timeout=5s --start-period=600s --retries=5 \
-  CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8080/core/login/', timeout=4).status == 200 else 1)"
+# Checks whichever role the container runs: the web application, or the background worker.
+HEALTHCHECK --interval=15s --timeout=8s --start-period=600s --retries=5 \
+  CMD ["python", "/opt/lanvex-core/lanvex/healthcheck.py"]
 # Through sh, so the script works even if an unpacked archive lost its execute permission.
 ENTRYPOINT ["/bin/sh", "/opt/lanvex-core/lanvex/docker-entrypoint.sh"]
 CMD ["core"]
