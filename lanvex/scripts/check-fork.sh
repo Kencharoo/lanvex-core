@@ -12,9 +12,18 @@ mapfile -t added < <(git diff --name-only --diff-filter=A "$base" -- . ':!lanvex
                      git ls-files --others --exclude-standard -- . ':!lanvex' ':!netbox/lanvex_core')
 
 echo "Lanvex Core on NetBox $base"
+# FORK.md lists each file in backticks, or a whole directory ending in "/".
+listed() {
+  grep -qF "\`$1\`" FORK.md && return 0
+  local dir
+  # shellcheck disable=SC2016  # literal backticks
+  while IFS= read -r dir; do [[ "$1" == "$dir"* ]] && return 0; done < <(grep -oE '`[^`]+/`' FORK.md | tr -d '`')
+  return 1
+}
+
 echo "NetBox files changed: ${#changed[@]}"
 for f in "${changed[@]}"; do
-  if ! grep -qF "\`$f\`" FORK.md; then
+  if ! listed "$f"; then
     echo "  MISSING FROM FORK.md: $f"; status=1
   fi
   case "$f" in
@@ -27,7 +36,7 @@ for f in "${changed[@]}"; do
 done
 echo "Files added outside lanvex/ and netbox/lanvex_core/: ${#added[@]}"
 for f in "${added[@]}"; do
-  if ! grep -qF "\`$f\`" FORK.md; then
+  if ! listed "$f"; then
     echo "  MISSING FROM FORK.md: $f"; status=1
   fi
   echo "  $f"

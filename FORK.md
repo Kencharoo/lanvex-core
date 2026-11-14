@@ -32,6 +32,7 @@ this fork makes to NetBox's own files can conflict with each of them, so:
 | `netbox/templates/login.html` | Lanvex Core logo | Same |
 | `README.md` | Short notice at the top that this is Lanvex Core, a fork | A fork must not present itself as NetBox |
 | `NOTICE` | Attribution for Lanvex Core's additions | Apache License 2.0, section 4d |
+| `.github/` | Removed: NetBox's issue and discussion templates, its bots (stale issues, translations, triage) and its CI. `merge-upstream.sh` removes whatever a NetBox release adds there | They serve the NetBox project. In this repository they would run every day, use its Actions minutes and fail for lack of NetBox's secrets |
 
 ## Files added outside lanvex/ and netbox/lanvex_core/
 
@@ -39,6 +40,7 @@ this fork makes to NetBox's own files can conflict with each of them, so:
 |---|---|
 | `FORK.md` | This file |
 | `.dockerignore` | Build context for `lanvex/Dockerfile` |
+| `.github/workflows/lanvex-core.yml` | Lanvex Core's CI: lint, fork check, migrations check, tests (NetBox's whole suite on tags and on request), and the image built and started with `lanvex/scripts/smoke-image.sh` |
 | `netbox/lanvex_configuration.py` | Production configuration from environment variables |
 | `netbox/lanvex_configuration_testing.py` | Test configuration: NetBox's plus lanvex_core and single sign-on |
 

@@ -12,6 +12,14 @@ cd "$(git rev-parse --show-toplevel)"
 usage() { echo "usage: $0 <NetBox release tag, e.g. v4.7.6> [--allow-prerelease] | --continue" >&2; exit 2; }
 [ $# -ge 1 ] || usage
 
+# NetBox's .github (its project's issue templates, bots and CI) is not part of Lanvex Core (FORK.md).
+# Whatever a release adds or changes there is removed again; conflicts there resolve the same way.
+drop_netbox_github() {
+  local paths
+  paths=$(git ls-files -- .github | sort -u | grep -v '^\.github/workflows/lanvex-' || true)
+  [ -z "$paths" ] || printf '%s\n' "$paths" | xargs git rm -q -f --
+}
+
 finish() {
   local tag; tag=$(cat .git/LANVEX_MERGE_TAG)
   echo "$tag" > lanvex/UPSTREAM
@@ -26,6 +34,7 @@ finish() {
 
 if [ "$1" = "--continue" ]; then
   [ -f .git/LANVEX_MERGE_TAG ] || { echo "No merge in progress." >&2; exit 1; }
+  drop_netbox_github
   if git diff --name-only --diff-filter=U | grep -q .; then
     echo "Still unresolved:" >&2; git diff --name-only --diff-filter=U >&2; exit 1
   fi
@@ -51,7 +60,9 @@ echo "$tag" > .git/LANVEX_MERGE_TAG
 echo "Merging NetBox $tag into Lanvex Core (currently on $current):"
 git log --oneline "$current..$tag" | wc -l | xargs echo "  NetBox commits:"
 git diff --name-only --diff-filter=A "$current" "$tag" -- '*/migrations/*' | wc -l | xargs echo "  new migrations:"
-if ! git merge --no-ff --no-commit -m "Merge NetBox $tag into Lanvex Core" "$tag"; then
+git merge --no-ff --no-commit -m "Merge NetBox $tag into Lanvex Core" "$tag" || true
+drop_netbox_github
+if git diff --name-only --diff-filter=U | grep -q .; then
   echo
   echo "Conflicts to resolve (FORK.md says why each of our changes exists):"
   git diff --name-only --diff-filter=U | sed 's/^/  /'
