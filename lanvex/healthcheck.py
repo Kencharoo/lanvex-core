@@ -26,6 +26,12 @@ def running_role(cmdline='/proc/1/cmdline'):
         return 'core'
     if b'rqworker' in args:
         return 'worker'
+    # Still in docker-entrypoint.sh (migrating, or waiting for the database): the role is its argument.
+    # Until gunicorn or the worker runs, the check must fail, so Docker reports "starting".
+    for i, a in enumerate(args):
+        if a.endswith(b'docker-entrypoint.sh'):
+            role = args[i + 1] if i + 1 < len(args) else b'core'
+            return {b'core': 'core', b'worker': 'worker'}.get(role, 'other')
     return 'other'
 
 
