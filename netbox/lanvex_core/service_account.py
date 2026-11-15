@@ -39,6 +39,12 @@ SERVICE_PERMISSIONS = (
         ),
     ),
     ServicePermission(
+        name='Lanvex: cables',
+        actions=('view', 'add'),
+        object_types=('dcim.cable',),
+        description='Lanvex draws the topology from cables, and records a cable an administrator confirms from LLDP.',
+    ),
+    ServicePermission(
         name='Lanvex: tags',
         actions=('view', 'add'),
         object_types=('extras.tag',),
