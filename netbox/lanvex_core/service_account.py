@@ -31,9 +31,12 @@ SERVICE_PERMISSIONS = (
     ),
     ServicePermission(
         name='Lanvex: interfaces',
-        actions=('view', 'change'),
-        object_types=('dcim.interface',),
-        description='Lanvex only edits 802.1Q mode and VLANs.',
+        actions=('view', 'add', 'change'),
+        object_types=('dcim.interface', 'virtualization.vminterface'),
+        description=(
+            'Lanvex edits 802.1Q mode and VLANs, and adds an interface a server has when an administrator '
+            'records that server in Lanvex Core.'
+        ),
     ),
     ServicePermission(
         name='Lanvex: tags',
