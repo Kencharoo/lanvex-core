@@ -6,7 +6,8 @@
 # One image, three roles (see docker-entrypoint.sh): core (the web application), worker (background
 # jobs) and manage (any manage.py command).
 
-ARG PYTHON_IMAGE=python:3.13-slim
+# Fully qualified, so Podman on Fedora/RHEL (short-name-mode enforcing) builds without asking.
+ARG PYTHON_IMAGE=docker.io/library/python:3.13-slim
 
 # ---- dependencies and documentation -------------------------------------------------------------
 FROM ${PYTHON_IMAGE} AS build

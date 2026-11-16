@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from django.contrib import auth
 from django.http import HttpResponseForbidden
+from django.middleware.csrf import get_token
 
 from .auth import proxy_verified
 
@@ -49,6 +50,10 @@ class LanvexProxyMiddleware:
                 user = self._sign_in_again(request, groups)
                 if user is None:
                     return _refused()
+            if request.path.startswith(f'/{settings.BASE_PATH}api/'):
+                # Scripts that use the API with a Lanvex session need the CSRF cookie for writes. Django
+                # sets it only on pages with a form; here every API response carries it.
+                get_token(request)
         elif request.path == settings.LOGIN_URL and request.META.get(settings.REMOTE_AUTH_HEADER):
             logger.warning(
                 'Could not sign in %r from Lanvex: %s.',

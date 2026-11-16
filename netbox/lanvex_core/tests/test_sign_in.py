@@ -100,3 +100,20 @@ class BrandingTest(TestCase):
         self.assertIn('Back to Lanvex', html)
         self.assertIn('Based on NetBox', html)
         self.assertNotIn('netboxlabs.com/netbox-cloud', html)
+
+
+class ScriptingTest(TestCase):
+    """Scripts use the API with a Lanvex session: any API response gives them the CSRF cookie for writes."""
+
+    def test_api_responses_set_the_csrf_cookie(self):
+        client = self.client_class(enforce_csrf_checks=True)
+        headers = via_lanvex('marco')
+        response = client.get('/' + settings.BASE_PATH + 'api/status/', **headers)
+        self.assertEqual(response.status_code, 200)
+        token = response.cookies[settings.CSRF_COOKIE_NAME].value
+        site = {'name': 'Lab', 'slug': 'lab'}
+        url = '/' + settings.BASE_PATH + 'api/dcim/sites/'
+        refused = client.post(url, site, content_type='application/json', **headers)
+        self.assertEqual(refused.status_code, 403)  # without the token
+        created = client.post(url, site, content_type='application/json', HTTP_X_CSRFTOKEN=token, **headers)
+        self.assertEqual(created.status_code, 201, created.content)
