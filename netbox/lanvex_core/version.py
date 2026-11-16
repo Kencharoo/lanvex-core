@@ -1,2 +1,2 @@
 # Lanvex Core follows Lanvex's version. The NetBox version it is based on is in lanvex/UPSTREAM.
-__version__ = '0.6.1'
+__version__ = '0.7.0'
