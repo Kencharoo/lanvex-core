@@ -83,7 +83,7 @@ class LanvexInitTest(TestCase):
         run()
         for spec in CUSTOM_FIELDS:
             field = CustomField.objects.get(name=spec.name)
-            self.assertEqual(field.type, 'text')
+            self.assertEqual(field.type, spec.type)
             self.assertEqual([f'{t.app_label}.{t.model}' for t in field.object_types.all()], [spec.object_type])
         # The service account fills them in through the API, validated like any custom field.
         run()
@@ -97,4 +97,5 @@ class LanvexInitTest(TestCase):
             'custom_fields': {'dhcp_lease_time': '2h'},
         }
         self.assertEqual(api().post(reverse('ipam-api:iprange-list'), pool, format='json').status_code, 201)
-        self.assertEqual(CustomField.objects.filter(name__in=[s.name for s in CUSTOM_FIELDS]).count(), 2)
+        self.assertEqual(CustomField.objects.filter(name__in=[s.name for s in CUSTOM_FIELDS]).count(), 3)
+        self.assertEqual(CustomField.objects.get(name='lanvex_access').type, 'json')

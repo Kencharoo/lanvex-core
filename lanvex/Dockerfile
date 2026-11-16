@@ -42,9 +42,8 @@ ENV PATH=/opt/venv/bin:$PATH \
 USER lanvexcore
 WORKDIR /opt/lanvex-core/netbox
 EXPOSE 8080
-# Checks whichever role the container runs: the web application, or the background worker.
-HEALTHCHECK --interval=15s --timeout=8s --start-period=600s --retries=5 \
-  CMD ["python", "/opt/lanvex-core/lanvex/healthcheck.py"]
+# The health check (lanvex/healthcheck.py, for the web application or the worker) is in Lanvex's
+# docker-compose.yml: Podman builds OCI images, which cannot carry one and warn about it on every build.
 # Through sh, so the script works even if an unpacked archive lost its execute permission.
 ENTRYPOINT ["/bin/sh", "/opt/lanvex-core/lanvex/docker-entrypoint.sh"]
 CMD ["core"]

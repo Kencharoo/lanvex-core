@@ -80,6 +80,8 @@ class CustomFieldSpec:
     object_type: str
     validation_regex: str
     description: str
+    type: str = 'text'
+    group: str = 'DHCP (Lanvex)'
 
 
 # Fields Lanvex reads to serve DHCP. lanvex_init creates them; administrators fill them in Lanvex or here.
@@ -99,5 +101,18 @@ CUSTOM_FIELDS = (
         object_type='ipam.iprange',
         validation_regex=r'^([1-9][0-9]{0,4}[mhd]|infinite)$',
         description='How long a device keeps an address from this DHCP pool: 30m, 12h, 2d or infinite. Empty: 12h.',
+    ),
+    # What devices on a Lanvex network may reach, on the network's interface. Lanvex edits and checks it.
+    CustomFieldSpec(
+        name='lanvex_access',
+        label='Access (Lanvex)',
+        object_type='dcim.interface',
+        validation_regex='',
+        description=(
+            'What devices on this Lanvex network may reach through the server: the Internet, other networks and '
+            'destinations with ports, services on the server. Edit it in Lanvex (server page, Networks).'
+        ),
+        type='json',
+        group='Access (Lanvex)',
     ),
 )

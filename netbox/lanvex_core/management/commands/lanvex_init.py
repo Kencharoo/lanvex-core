@@ -56,11 +56,12 @@ class Command(BaseCommand):
 
             for spec in CUSTOM_FIELDS:
                 # Created once and kept in shape; an administrator's own fields are never touched.
-                field = CustomField.objects.filter(name=spec.name).first() or CustomField(name=spec.name, type='text')
+                field = CustomField.objects.filter(name=spec.name).first()
+                field = field or CustomField(name=spec.name, type=spec.type)
                 field.label = spec.label
                 field.description = spec.description
                 field.validation_regex = spec.validation_regex
-                field.group_name = 'DHCP (Lanvex)'
+                field.group_name = spec.group
                 field.required = False
                 field.save()
                 field.object_types.add(ObjectType.objects.get_by_natural_key(*spec.object_type.split('.')))
