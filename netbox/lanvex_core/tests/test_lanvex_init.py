@@ -7,7 +7,8 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from lanvex_core.service_account import SERVICE_PERMISSIONS
+from extras.models import CustomField
+from lanvex_core.service_account import CUSTOM_FIELDS, SERVICE_PERMISSIONS
 from users.models import Group, ObjectPermission, Token, User
 
 TOKEN = 'nbt_AbCdEf123456.' + 'Q' * 20 + 'r' * 20
@@ -77,3 +78,23 @@ class LanvexInitTest(TestCase):
         for bad in ('', 'nbt_short.x', TOKEN + 'x', '0123456789abcdef0123456789abcdef01234567'):
             with self.assertRaises(CommandError):
                 run(bad)
+
+    def test_creates_the_dhcp_custom_fields(self):
+        run()
+        for spec in CUSTOM_FIELDS:
+            field = CustomField.objects.get(name=spec.name)
+            self.assertEqual(field.type, 'text')
+            self.assertEqual([f'{t.app_label}.{t.model}' for t in field.object_types.all()], [spec.object_type])
+        # The service account fills them in through the API, validated like any custom field.
+        run()
+        ip = {'address': '192.168.50.20/24', 'custom_fields': {'mac_address': 'aa:bb:cc:00:00:02'}}
+        self.assertEqual(api().post(reverse('ipam-api:ipaddress-list'), ip, format='json').status_code, 201)
+        bad = {'address': '192.168.50.21/24', 'custom_fields': {'mac_address': 'AA-BB'}}
+        self.assertEqual(api().post(reverse('ipam-api:ipaddress-list'), bad, format='json').status_code, 400)
+        pool = {
+            'start_address': '192.168.50.100/24',
+            'end_address': '192.168.50.199/24',
+            'custom_fields': {'dhcp_lease_time': '2h'},
+        }
+        self.assertEqual(api().post(reverse('ipam-api:iprange-list'), pool, format='json').status_code, 201)
+        self.assertEqual(CustomField.objects.filter(name__in=[s.name for s in CUSTOM_FIELDS]).count(), 2)
