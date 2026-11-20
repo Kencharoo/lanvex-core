@@ -99,3 +99,21 @@ class LanvexInitTest(TestCase):
         self.assertEqual(api().post(reverse('ipam-api:iprange-list'), pool, format='json').status_code, 201)
         self.assertEqual(CustomField.objects.filter(name__in=[s.name for s in CUSTOM_FIELDS]).count(), 3)
         self.assertEqual(CustomField.objects.get(name='lanvex_access').type, 'json')
+
+    def test_records_settings_on_devices_but_does_not_add_or_delete_them(self):
+        from dcim.models import Device, DeviceRole, DeviceType, Manufacturer, Site
+
+        run()
+        site = Site.objects.create(name='School', slug='school')
+        maker = Manufacturer.objects.create(name='Generic', slug='generic')
+        kind = DeviceType.objects.create(manufacturer=maker, model='Server', slug='server')
+        role = DeviceRole.objects.create(name='Server', slug='server')
+        device = Device.objects.create(name='gw1', site=site, device_type=kind, role=role)
+        url = reverse('dcim-api:device-detail', kwargs={'pk': device.pk})
+        data = {'local_context_data': {'lanvex': {'dns_servers': ['10.0.0.53']}}}
+        r = api().patch(url, data, format='json')
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.json()['config_context'], {'lanvex': {'dns_servers': ['10.0.0.53']}})
+        self.assertEqual(api().delete(url).status_code, 403)
+        new = {'name': 'gw2', 'site': site.pk, 'device_type': kind.pk, 'role': role.pk}
+        self.assertEqual(api().post(reverse('dcim-api:device-list'), new, format='json').status_code, 403)

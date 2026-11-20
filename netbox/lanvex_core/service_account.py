@@ -61,12 +61,21 @@ SERVICE_PERMISSIONS = (
         description='Lanvex creates its tags (lanvex-gateway, lanvex-dhcp) once.',
     ),
     ServicePermission(
+        name='Lanvex: devices and virtual machines',
+        actions=('view', 'change'),
+        object_types=('dcim.device', 'virtualization.virtualmachine'),
+        description=(
+            "Lanvex records a server's DNS servers, search domains and static routes in its local config context "
+            'data (key lanvex), when an administrator records them. It does not add or delete devices.'
+        ),
+    ),
+    ServicePermission(
         name='Lanvex: reference data',
         actions=('view',),
         object_types=(
             'ipam.vrf', 'ipam.role', 'ipam.vlangroup',
-            'dcim.device', 'dcim.site', 'dcim.devicerole', 'dcim.manufacturer',
-            'tenancy.tenant', 'core.objectchange', 'virtualization.virtualmachine',
+            'dcim.site', 'dcim.devicerole', 'dcim.manufacturer',
+            'tenancy.tenant', 'core.objectchange',
         ),
         description='Read only.',
     ),
